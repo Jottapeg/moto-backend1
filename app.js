@@ -99,7 +99,4 @@ startServer();
 
 module.exports = app;
 
-git add app.js
-git commit -m "Desativando frontend inexistente para evitar erro"
-git push origin main
 
