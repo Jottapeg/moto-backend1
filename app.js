@@ -59,14 +59,7 @@ app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 
-// Servir arquivos estáticos em produção
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, '../../frontend/build')));
-  
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html'));
-  });
-}
+
 
 // Middleware para tratamento de erros
 app.use((err, req, res, next) => {
