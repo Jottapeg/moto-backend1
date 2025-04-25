@@ -1,3 +1,24 @@
+const mongoose = require('mongoose');
+
+// Definir o esquema de usuário
+const UserSchema = new mongoose.Schema({
+  email: {
+    type: String,
+    required: [true, 'Por favor, forneça o email'],
+    unique: true,
+    lowercase: true,
+  },
+  password: {
+    type: String,
+    required: [true, 'Por favor, forneça a senha'],
+  },
+});
+
+// Criar o modelo
+const User = mongoose.model('User', UserSchema);
+
+module.exports = User;
+
 const crypto = require('crypto');
 
 const token = crypto.randomBytes(32).toString('hex');
