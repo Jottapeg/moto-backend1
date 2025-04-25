@@ -94,8 +94,14 @@ const startServer = async () => {
     process.exit(1);
   }
 };
-
 startServer();
+
+// Rota raiz
+app.get('/', (req, res) => {
+  res.send('Servidor está funcionando corretamente!');
+});
+
+// Rota ping
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
