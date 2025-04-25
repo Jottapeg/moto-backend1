@@ -1,4 +1,29 @@
 const express = require('express');
+const dotenv = require('dotenv');
+const cors = require('cors');
+const cookieParser = require('cookie-parser');
+const authRoutes = require('./routes/auth'); // Importar as rotas de autenticação
+
+// Carregar variáveis de ambiente
+dotenv.config();
+
+const app = express();
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+
+// Rota de autenticação
+app.use('/api/v1/auth', authRoutes); // Agora você tem a rota /login disponível em /api/v1/auth/login
+
+// Inicializar o servidor
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+});
+
+const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
