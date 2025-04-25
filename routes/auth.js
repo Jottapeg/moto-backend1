@@ -1,3 +1,42 @@
+// Rota de registro
+router.post('/register', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Verificar se o usuário já existe
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({
+        success: false,
+        error: 'O email já está em uso',
+      });
+    }
+
+    // Criptografar a senha
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Criar o novo usuário
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+    });
+
+    // Salvar no banco de dados
+    await newUser.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Usuário criado com sucesso',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      error: 'Erro no servidor',
+    });
+  }
+});
+
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
