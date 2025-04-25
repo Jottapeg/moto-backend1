@@ -96,6 +96,10 @@ const startServer = async () => {
 };
 
 startServer();
+app.get('/ping', (req, res) => {
+  res.json({ message: 'pong' });
+});
+
 
 module.exports = app;
 app.set('trust proxy', 1);
