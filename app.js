@@ -98,5 +98,7 @@ const startServer = async () => {
 startServer();
 
 module.exports = app;
+app.set('trust proxy', 1);
+
 
 
