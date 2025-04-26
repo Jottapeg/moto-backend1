@@ -2,24 +2,27 @@ const express = require('express');
 const router = express.Router();
 const Usuario = require('../models/usuario');
 
-// Criar novo usuário
+// Rota para criar um novo usuário
 router.post('/', async (req, res) => {
   try {
-    console.log('Body recebido:', req.body); // 👈 ADICIONA ESTE LOG
-
     const { nome, email, senha } = req.body;
-
-    if (!nome || !email || !senha) {
-      return res.status(400).json({ success: false, error: 'Nome, email e senha são obrigatórios' });
-    }
-
     const novoUsuario = new Usuario({ nome, email, senha });
     await novoUsuario.save();
-
     res.status(201).json({ success: true, usuario: novoUsuario });
   } catch (err) {
-    console.error('Erro ao criar usuário:', err); // 👈 LOGA O ERRO COMPLETO
-    res.status(500).json({ success: false, error: 'Erro interno ao criar usuário' });
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Erro ao criar usuário' });
+  }
+});
+
+// Rota para listar todos os usuários
+router.get('/', async (req, res) => {
+  try {
+    const usuarios = await Usuario.find(); // Busca todos os usuários
+    res.status(200).json({ success: true, usuarios });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Erro ao listar usuários' });
   }
 });
 
