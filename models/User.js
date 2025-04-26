@@ -23,7 +23,6 @@ const crypto = require('crypto');
 
 const token = crypto.randomBytes(32).toString('hex');
 
-const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
