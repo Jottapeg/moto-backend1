@@ -86,7 +86,6 @@ router.post('/login', async (req, res) => {
 
 module.exports = router;
 
-const express = require('express');
 const router = express.Router();
 const { protect } = require('../middleware/auth');
 
