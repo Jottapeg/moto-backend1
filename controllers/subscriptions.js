@@ -1,7 +1,7 @@
 const asyncHandler = require('../middleware/async');
 const ErrorResponse = require('../utils/errorResponse');
 const Subscription = require('../models/Subscription');
-const User = require('../models/User');
+const Usuario = require('../models/Usuario');
 const Payment = require('../models/Payment');
 
 // @desc    Obter todas as assinaturas do usuário
