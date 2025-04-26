@@ -1,29 +1,21 @@
 const express = require('express');
 const router = express.Router();
+const Usuario = require('../models/Usuario');
 
-// @desc    Teste de rota de usuários
-// @route   GET /api/v1/usuarios
-// @access  Público
-router.get('/', (req, res) => {
-  res.json({ success: true, message: 'Rota de usuários funcionando!' });
-});
+// Criar novo usuário
+router.post('/', async (req, res) => {
+  try {
+    const { nome, email, senha } = req.body;
 
-// @desc    Criar novo usuário
-// @route   POST /api/v1/usuarios
-// @access  Público
-router.post('/', (req, res) => {
-  const { nome, email, senha } = req.body;
+    const novoUsuario = new Usuario({ nome, email, senha });
+    await novoUsuario.save();
 
-  if (!nome || !email || !senha) {
-    return res.status(400).json({ success: false, error: 'Campos obrigatórios: nome, email, senha' });
+    res.status(201).json({ success: true, usuario: novoUsuario });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Erro ao criar usuário' });
   }
-
-  // Aqui você pode salvar no banco de dados depois
-  res.status(201).json({
-    success: true,
-    message: 'Usuário criado com sucesso!',
-    data: { nome, email }
-  });
 });
 
 module.exports = router;
+
