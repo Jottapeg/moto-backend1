@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const usuario = require('../models/usuario');
+const Usuario = require('../models/usuario'); // Corrigido: importação com letra maiúscula igual no uso abaixo
 
 // Criar novo usuário
 router.post('/', async (req, res) => {
@@ -12,10 +12,20 @@ router.post('/', async (req, res) => {
 
     res.status(201).json({ success: true, usuario: novoUsuario });
   } catch (err) {
-    console.error(err);
+    console.error('Erro ao criar usuário:', err);
     res.status(500).json({ success: false, error: 'Erro ao criar usuário' });
   }
 });
 
-module.exports = router;
+// (opcional) Listar usuários - para testar se rota está funcionando
+router.get('/', async (req, res) => {
+  try {
+    const usuarios = await Usuario.find();
+    res.json(usuarios);
+  } catch (err) {
+    console.error('Erro ao listar usuários:', err);
+    res.status(500).json({ success: false, error: 'Erro ao listar usuários' });
+  }
+});
 
+module.exports = router;
