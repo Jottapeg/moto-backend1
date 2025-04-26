@@ -1,31 +1,10 @@
 const mongoose = require('mongoose');
-
-// Definir o esquema de usuário
-const UserSchema = new mongoose.Schema({
-  email: {
-    type: String,
-    required: [true, 'Por favor, forneça o email'],
-    unique: true,
-    lowercase: true,
-  },
-  password: {
-    type: String,
-    required: [true, 'Por favor, forneça a senha'],
-  },
-});
-
-// Criar o modelo
-const User = mongoose.model('User', UserSchema);
-
-module.exports = User;
-
 const crypto = require('crypto');
-
-const token = crypto.randomBytes(32).toString('hex');
-
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
+// Definir o esquema de usuário
+const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Por favor, informe seu nome'],
@@ -160,10 +139,10 @@ UserSchema.pre('save', async function(next) {
   if (!this.isModified('password')) {
     next();
   }
-  
+
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
-  
+
   // Atualizar o campo updatedAt
   this.updatedAt = Date.now();
 });
@@ -184,47 +163,31 @@ UserSchema.methods.getSignedJwtToken = function() {
 
 // Método para gerar token de verificação de email
 UserSchema.methods.generateEmailVerificationToken = function() {
-  // Gerar token
   const verificationToken = crypto.randomBytes(20).toString('hex');
-  
-  // Criptografar token e definir campo no usuário
   this.verifications.emailVerificationToken = crypto
     .createHash('sha256')
     .update(verificationToken)
     .digest('hex');
-  
-  // Definir expiração (24 horas)
   this.verifications.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000;
-  
   return verificationToken;
 };
 
 // Método para gerar código de verificação de telefone
 UserSchema.methods.generatePhoneVerificationCode = function() {
-  // Gerar código de 6 dígitos
   const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-  
-  // Definir código e expiração (10 minutos)
   this.verifications.phoneVerificationCode = verificationCode;
   this.verifications.phoneVerificationExpires = Date.now() + 10 * 60 * 1000;
-  
   return verificationCode;
 };
 
 // Método para gerar token de redefinição de senha
 UserSchema.methods.generateResetPasswordToken = function() {
-  // Gerar token
   const resetToken = crypto.randomBytes(20).toString('hex');
-  
-  // Criptografar token e definir campos no usuário
   this.resetPasswordToken = crypto
     .createHash('sha256')
     .update(resetToken)
     .digest('hex');
-  
-  // Definir expiração (10 minutos)
   this.resetPasswordExpires = Date.now() + 10 * 60 * 1000;
-  
   return resetToken;
 };
 
