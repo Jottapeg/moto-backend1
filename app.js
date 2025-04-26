@@ -13,16 +13,11 @@ const mongoose = require('mongoose');
 // Carregar variáveis de ambiente
 dotenv.config();
 
-// Importar rotas
-const authRoutes = require('./routes/auth');
-const listingRoutes = require('./routes/listings');
-const conversationRoutes = require('./routes/conversations');
-const paymentRoutes = require('./routes/payments');
-const subscriptionRoutes = require('./routes/subscriptions');
-const usuarioRoutes = require('./routes/usuario');  // Adicionando rota de usuários
-
 // Inicializar app
 const app = express();
+
+// Configurações iniciais
+app.set('trust proxy', 1); // Colocado no início, onde é o correto
 
 // Middleware de segurança
 app.use(helmet());
@@ -52,21 +47,37 @@ app.use(fileUpload({
   abortOnLimit: true
 }));
 
+// Importar rotas
+const authRoutes = require('./routes/auth');
+const listingRoutes = require('./routes/listings');
+const conversationRoutes = require('./routes/conversations');
+const paymentRoutes = require('./routes/payments');
+const subscriptionRoutes = require('./routes/subscriptions');
+const usuarioRoutes = require('./routes/usuario'); // Rota de usuários
+
 // Definir rotas da API
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
-app.use('/api/v1/usuarios', usuarioRoutes);  // Rota de usuários
+app.use('/api/v1/usuarios', usuarioRoutes);
 
-// Log para verificar se a rota foi registrada corretamente
-console.log("Rota /api/v1/usuarios registrada");
+console.log("Rotas principais registradas!");
+
+// Rota raiz
+app.get('/', (req, res) => {
+  res.send('Servidor está funcionando corretamente!');
+});
+
+// Rota ping
+app.get('/ping', (req, res) => {
+  res.json({ message: 'pong' });
+});
 
 // Middleware para tratamento de erros
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  
+  console.error('Erro interno:', err.stack);
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Erro interno do servidor';
   
@@ -96,15 +107,5 @@ const startServer = async () => {
 };
 startServer();
 
-// Rota raiz
-app.get('/', (req, res) => {
-  res.send('Servidor está funcionando corretamente!');
-});
-
-// Rota ping
-app.get('/ping', (req, res) => {
-  res.json({ message: 'pong' });
-});
-
 module.exports = app;
-app.set('trust proxy', 1);
+
