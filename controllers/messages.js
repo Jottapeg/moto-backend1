@@ -1,6 +1,6 @@
 const Conversation = require('../models/Conversation');
 const Message = require('../models/Message');
-const User = require('../models/User');
+const Usuario = require('../models/Usuario');
 const Listing = require('../models/Listing');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
