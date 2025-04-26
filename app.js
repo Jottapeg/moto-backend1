@@ -19,7 +19,7 @@ const listingRoutes = require('./routes/listings');
 const conversationRoutes = require('./routes/conversations');
 const paymentRoutes = require('./routes/payments');
 const subscriptionRoutes = require('./routes/subscriptions');
-const usuarioRoutes = require('./routes/usuarios');  // Adicionando rota de usuários
+const usuarioRoutes = require('./routes/usuario');  // Adicionando rota de usuários
 
 // Inicializar app
 const app = express();
