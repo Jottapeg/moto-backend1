@@ -26,7 +26,6 @@ const token = crypto.randomBytes(32).toString('hex');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const UserSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Por favor, informe seu nome'],
