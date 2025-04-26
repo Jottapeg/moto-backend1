@@ -33,7 +33,10 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Middleware para CORS
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',  // Substitua pelo seu domínio
+  methods: ['GET', 'POST'],
+}));
 
 // Middleware para parsing
 app.use(express.json());
@@ -108,4 +111,5 @@ const startServer = async () => {
 startServer();
 
 module.exports = app;
+
 
