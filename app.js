@@ -19,6 +19,7 @@ const listingRoutes = require('./routes/listings');
 const conversationRoutes = require('./routes/conversations');
 const paymentRoutes = require('./routes/payments');
 const subscriptionRoutes = require('./routes/subscriptions');
+const usuarioRoutes = require('./routes/usuarios');  // Adicionando rota de usuários
 
 // Inicializar app
 const app = express();
@@ -57,6 +58,10 @@ app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
+app.use('/api/v1/usuarios', usuarioRoutes);  // Rota de usuários
+
+// Log para verificar se a rota foi registrada corretamente
+console.log("Rota /api/v1/usuarios registrada");
 
 // Middleware para tratamento de erros
 app.use((err, req, res, next) => {
