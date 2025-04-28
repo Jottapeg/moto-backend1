@@ -144,3 +144,37 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`Servidor rodando na porta ${port}`);
 });
+
+// app.js
+
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const app = express();
+
+// Middleware para verificar o token
+const autenticarUsuario = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]; // Espera um token no formato "Bearer <token>"
+  
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Token não fornecido' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodifica o token
+    req.usuarioId = decoded.id; // Armazena o ID do usuário na requisição
+    next(); // Passa para a próxima etapa
+  } catch (error) {
+    return res.status(403).json({ success: false, message: 'Token inválido ou expirado' });
+  }
+};
+
+// Rota protegida
+app.get('/api/v1/usuarios/protegido', autenticarUsuario, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Acesso permitido',
+    usuarioId: req.usuarioId,
+  });
+});
+
+// Outras rotas e configurações...
