@@ -34,7 +34,7 @@ app.use('/api/', limiter);
 
 // Middleware para CORS
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3000',  // Defina sua URL do frontend (no caso de produção, coloque o domínio correto)
+  origin: 'http://localhost:3000',  // Substitua pelo seu domínio
   methods: ['GET', 'POST'],
 }));
 
