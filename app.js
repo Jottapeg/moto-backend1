@@ -111,3 +111,36 @@ const startServer = async () => {
 startServer();
 
 module.exports = app;
+
+
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const usuarioRoutes = require('./routes/usuarioRoutes');
+const motoRoutes = require('./routes/motoRoutes'); // Importando o arquivo de rotas de motos
+
+dotenv.config();
+
+// Middlewares
+app.use(express.json()); // Para fazer o Express entender JSON no corpo da requisição
+app.use(cors()); // Para permitir requisições de diferentes origens (CORS)
+
+// Conectando ao banco de dados MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('Banco de dados conectado com sucesso!'))
+.catch((err) => console.error('Erro ao conectar com o banco de dados', err));
+
+// Registrando as rotas
+app.use('/api/v1/usuarios', usuarioRoutes); // Registrando as rotas de usuários
+app.use('/api/v1/motos', motoRoutes); // Registrando as rotas de motos
+
+// Iniciando o servidor
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Servidor rodando na porta ${port}`);
+});
