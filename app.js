@@ -105,4 +105,15 @@ const startServer = async () => {
     console.log('✅ MongoDB conectado');
 
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT,
+    app.listen(PORT, '0.0.0.0', () => {
+      console.log(`🚀 Servidor rodando na porta ${PORT}`);
+    });
+  } catch (err) {
+    console.error('❌ Erro ao conectar ao MongoDB:', err.message);
+    process.exit(1);
+  }
+};
+
+startServer();
+
+module.exports = app;
