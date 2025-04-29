@@ -59,7 +59,7 @@ const conversationRoutes = require('./routes/conversations');
 const paymentRoutes = require('./routes/payments');
 const subscriptionRoutes = require('./routes/subscriptions');
 const usuarioRoutes = require('./routes/usuario');
-const motoRoutes = require('./routes/motos'); // Corrigido o nome do arquivo
+const motoRoutes = require('./routes/motos.js');
 
 // Usar as rotas
 app.use('/api/v1/auth', authRoutes);
