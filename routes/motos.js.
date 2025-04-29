@@ -1,16 +1,37 @@
 const express = require('express');
-const { criarMoto, listarMotos, deletarMoto } = require('../controllers/motoController');
 const { proteger } = require('../middleware/auth');
+const { upload } = require('../middleware/upload');
+const {
+  criarMoto,
+  listarMotos,
+  obterMoto,
+  atualizarMoto,
+  deletarMoto,
+  marcarDestaque,
+  marcarPremium,
+  marcarVendida,
+  favoritarMoto,
+  desfavoritarMoto,
+} = require('../controllers/motoController');
 
 const router = express.Router();
 
-// Criar uma nova moto (rota protegida)
-router.post('/', proteger, criarMoto);
+router
+  .route('/')
+  .post(proteger, upload.single('imagem'), criarMoto)
+  .get(listarMotos);
 
-// Listar todas as motos (rota pública)
-router.get('/', listarMotos);
+router
+  .route('/:id')
+  .get(obterMoto)
+  .put(proteger, upload.single('imagem'), atualizarMoto)
+  .delete(proteger, deletarMoto);
 
-// Deletar uma moto por ID (rota protegida)
-router.delete('/:id', proteger, deletarMoto);
+router.put('/:id/destaque', proteger, marcarDestaque);
+router.put('/:id/premium', proteger, marcarPremium);
+router.put('/:id/vendida', proteger, marcarVendida);
+router.put('/:id/favoritar', proteger, favoritarMoto);
+router.put('/:id/desfavoritar', proteger, desfavoritarMoto);
 
 module.exports = router;
+
