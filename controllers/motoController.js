@@ -1,56 +1,52 @@
 const Moto = require('../models/Moto');
 
-// Criar uma nova moto
+// Criar moto
 exports.criarMoto = async (req, res) => {
   try {
-    const novaMoto = new Moto({
-      ...req.body,
-      usuario: req.user.id,
-      imagem: req.file ? req.file.filename : 'no-photo.jpg',
-    });
-    const motoSalva = await novaMoto.save();
-    res.status(201).json(motoSalva);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao criar moto', detalhes: err.message });
+    const novaMoto = new Moto(req.body);
+    if (req.file) {
+      novaMoto.imagem = req.file.path;
+    }
+    await novaMoto.save();
+    res.status(201).json(novaMoto);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao criar moto' });
   }
 };
 
-// Listar todas as motos
+// Listar motos
 exports.listarMotos = async (req, res) => {
   try {
-    const motos = await Moto.find().populate('usuario', 'nome email');
+    const motos = await Moto.find();
     res.json(motos);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao listar motos' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao listar motos' });
   }
 };
 
-// Obter uma moto específica
+// Obter moto por ID
 exports.obterMoto = async (req, res) => {
   try {
-    const moto = await Moto.findById(req.params.id).populate('usuario', 'nome email');
-    if (!moto) return res.status(404).json({ error: 'Moto não encontrada' });
+    const moto = await Moto.findById(req.params.id);
+    if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
     res.json(moto);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao buscar moto' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao buscar moto' });
   }
 };
 
 // Atualizar moto
 exports.atualizarMoto = async (req, res) => {
   try {
-    const dadosAtualizados = {
-      ...req.body,
-      imagem: req.file ? req.file.filename : undefined,
-    };
-    const motoAtualizada = await Moto.findByIdAndUpdate(req.params.id, dadosAtualizados, {
-      new: true,
-      runValidators: true,
-    });
-    if (!motoAtualizada) return res.status(404).json({ error: 'Moto não encontrada' });
-    res.json(motoAtualizada);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao atualizar moto' });
+    const atualizacoes = req.body;
+    if (req.file) {
+      atualizacoes.imagem = req.file.path;
+    }
+    const moto = await Moto.findByIdAndUpdate(req.params.id, atualizacoes, { new: true });
+    if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
+    res.json(moto);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao atualizar moto' });
   }
 };
 
@@ -58,10 +54,10 @@ exports.atualizarMoto = async (req, res) => {
 exports.deletarMoto = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndDelete(req.params.id);
-    if (!moto) return res.status(404).json({ error: 'Moto não encontrada' });
-    res.json({ sucesso: true, mensagem: 'Moto removida com sucesso' });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao deletar moto' });
+    if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
+    res.json({ mensagem: 'Moto deletada com sucesso' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao deletar moto' });
   }
 };
 
@@ -70,8 +66,8 @@ exports.marcarDestaque = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { destaque: true }, { new: true });
     res.json(moto);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao destacar moto' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao marcar como destaque' });
   }
 };
 
@@ -80,8 +76,8 @@ exports.marcarPremium = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { premium: true }, { new: true });
     res.json(moto);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao marcar como premium' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao marcar como premium' });
   }
 };
 
@@ -90,25 +86,34 @@ exports.marcarVendida = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { vendida: true }, { new: true });
     res.json(moto);
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao marcar como vendida' });
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao marcar como vendida' });
   }
 };
 
-// Favoritar moto (placeholder)
+// Favoritar moto
 exports.favoritarMoto = async (req, res) => {
   try {
-    res.json({ sucesso: true, mensagem: 'Favoritada com sucesso (placeholder)' });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao favoritar' });
+    const moto = await Moto.findById(req.params.id);
+    if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
+    if (!moto.favoritos) moto.favoritos = [];
+    moto.favoritos.push(req.usuario.id);
+    await moto.save();
+    res.json(moto);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao favoritar moto' });
   }
 };
 
-// Desfavoritar moto (placeholder)
+// Desfavoritar moto
 exports.desfavoritarMoto = async (req, res) => {
   try {
-    res.json({ sucesso: true, mensagem: 'Desfavoritada com sucesso (placeholder)' });
-  } catch (err) {
-    res.status(500).json({ error: 'Erro ao desfavoritar' });
+    const moto = await Moto.findById(req.params.id);
+    if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
+    moto.favoritos = moto.favoritos.filter(id => id.toString() !== req.usuario.id);
+    await moto.save();
+    res.json(moto);
+  } catch (error) {
+    res.status(500).json({ erro: 'Erro ao desfavoritar moto' });
   }
 };
