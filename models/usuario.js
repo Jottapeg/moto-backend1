@@ -1,5 +1,3 @@
-// models/usuario.js
-
 const mongoose = require('mongoose');
 
 const UsuarioSchema = new mongoose.Schema({
@@ -13,10 +11,7 @@ const UsuarioSchema = new mongoose.Schema({
     type: String,
     required: [true, 'O email é obrigatório'],
     unique: true,
-    match: [
-      /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-      'Informe um email válido'
-    ]
+    match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Informe um email válido']
   },
   senha: {
     type: String,
