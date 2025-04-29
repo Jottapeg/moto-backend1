@@ -1,7 +1,7 @@
 const Moto = require('../models/Moto');
 
 // Criar moto
-exports.criarMoto = async (req, res) => {
+const criarMoto = async (req, res) => {
   try {
     const novaMoto = new Moto(req.body);
     if (req.file) {
@@ -15,7 +15,7 @@ exports.criarMoto = async (req, res) => {
 };
 
 // Listar motos
-exports.listarMotos = async (req, res) => {
+const listarMotos = async (req, res) => {
   try {
     const motos = await Moto.find();
     res.json(motos);
@@ -25,7 +25,7 @@ exports.listarMotos = async (req, res) => {
 };
 
 // Obter moto por ID
-exports.obterMoto = async (req, res) => {
+const obterMoto = async (req, res) => {
   try {
     const moto = await Moto.findById(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -36,7 +36,7 @@ exports.obterMoto = async (req, res) => {
 };
 
 // Atualizar moto
-exports.atualizarMoto = async (req, res) => {
+const atualizarMoto = async (req, res) => {
   try {
     const atualizacoes = req.body;
     if (req.file) {
@@ -51,7 +51,7 @@ exports.atualizarMoto = async (req, res) => {
 };
 
 // Deletar moto
-exports.deletarMoto = async (req, res) => {
+const deletarMoto = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndDelete(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -62,7 +62,7 @@ exports.deletarMoto = async (req, res) => {
 };
 
 // Marcar como destaque
-exports.marcarDestaque = async (req, res) => {
+const marcarDestaque = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { destaque: true }, { new: true });
     res.json(moto);
@@ -72,7 +72,7 @@ exports.marcarDestaque = async (req, res) => {
 };
 
 // Marcar como premium
-exports.marcarPremium = async (req, res) => {
+const marcarPremium = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { premium: true }, { new: true });
     res.json(moto);
@@ -82,7 +82,7 @@ exports.marcarPremium = async (req, res) => {
 };
 
 // Marcar como vendida
-exports.marcarVendida = async (req, res) => {
+const marcarVendida = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { vendida: true }, { new: true });
     res.json(moto);
@@ -92,7 +92,7 @@ exports.marcarVendida = async (req, res) => {
 };
 
 // Favoritar moto
-exports.favoritarMoto = async (req, res) => {
+const favoritarMoto = async (req, res) => {
   try {
     const moto = await Moto.findById(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -106,7 +106,7 @@ exports.favoritarMoto = async (req, res) => {
 };
 
 // Desfavoritar moto
-exports.desfavoritarMoto = async (req, res) => {
+const desfavoritarMoto = async (req, res) => {
   try {
     const moto = await Moto.findById(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -116,4 +116,18 @@ exports.desfavoritarMoto = async (req, res) => {
   } catch (error) {
     res.status(500).json({ erro: 'Erro ao desfavoritar moto' });
   }
+};
+
+// Exportar todas as funções
+module.exports = {
+  criarMoto,
+  listarMotos,
+  obterMoto,
+  atualizarMoto,
+  deletarMoto,
+  marcarDestaque,
+  marcarPremium,
+  marcarVendida,
+  favoritarMoto,
+  desfavoritarMoto
 };
