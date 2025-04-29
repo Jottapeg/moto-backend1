@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const Usuario = require('../models/usuario');
 
-// Middleware para verificar o token
+// Middleware de autenticação
 const autenticarUsuario = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
 
@@ -23,16 +23,7 @@ const autenticarUsuario = (req, res, next) => {
   }
 };
 
-// 🔥 🔥 🔥 AQUI: Rota protegida movida para cá!
-router.get('/protegido', autenticarUsuario, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Acesso permitido',
-    usuarioId: req.usuarioId,
-  });
-});
-
-// Rota para cadastrar novo usuário
+// Cadastro de usuário
 router.post('/', async (req, res) => {
   try {
     const { nome, email, senha } = req.body;
@@ -59,7 +50,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Rota para login
+// Login do usuário
 router.post('/login', async (req, res) => {
   try {
     const { email, senha } = req.body;
@@ -91,15 +82,13 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// Rota para listar usuários
-router.get('/', async (req, res) => {
-  try {
-    const usuarios = await Usuario.find();
-    res.status(200).json({ success: true, usuarios });
-  } catch (err) {
-    console.error('Erro ao listar usuários:', err);
-    res.status(500).json({ success: false, error: 'Erro ao listar usuários' });
-  }
+// ✅ Rota protegida (agora no lugar certo)
+router.get('/protegido', autenticarUsuario, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Acesso permitido',
+    usuarioId: req.usuarioId,
+  });
 });
 
 module.exports = router;
