@@ -5,7 +5,7 @@ exports.criarMoto = async (req, res) => {
   try {
     const novaMoto = new Moto({
       ...req.body,
-      usuario: req.usuario.id,
+      usuario: req.user.id,
       imagem: req.file ? req.file.filename : 'no-photo.jpg',
     });
     const motoSalva = await novaMoto.save();
@@ -95,20 +95,18 @@ exports.marcarVendida = async (req, res) => {
   }
 };
 
-// Favoritar moto
+// Favoritar moto (placeholder)
 exports.favoritarMoto = async (req, res) => {
   try {
-    // lógica simplificada: você pode adaptar para salvar no usuário depois
     res.json({ sucesso: true, mensagem: 'Favoritada com sucesso (placeholder)' });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao favoritar' });
   }
 };
 
-// Desfavoritar moto
+// Desfavoritar moto (placeholder)
 exports.desfavoritarMoto = async (req, res) => {
   try {
-    // lógica simplificada: você pode adaptar para remover do usuário depois
     res.json({ sucesso: true, mensagem: 'Desfavoritada com sucesso (placeholder)' });
   } catch (err) {
     res.status(500).json({ error: 'Erro ao desfavoritar' });
