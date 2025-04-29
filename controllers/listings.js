@@ -1,5 +1,5 @@
 const Listing = require('../models/Listing');
-const usuario = require('../models/usuario');
+const usuario = require('../models/Usuario');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const cloudinary = require('../utils/cloudinary');
