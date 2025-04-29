@@ -29,15 +29,15 @@ app.use(hpp());
 
 // Limitar requisições
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutos
+  windowMs: 10 * 60 * 1000,
   max: 100
 });
 app.use('/api/', limiter);
 
 // CORS
 app.use(cors({
-  origin: 'http://localhost:3000', // ajuste conforme necessário
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: 'http://localhost:3000',
+  methods: ['GET', 'POST'],
 }));
 
 // Parsing
@@ -48,7 +48,7 @@ app.use(cookieParser());
 app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: '/tmp/',
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   abortOnLimit: true
 }));
 
@@ -61,7 +61,7 @@ const subscriptionRoutes = require('./routes/subscriptions');
 const usuarioRoutes = require('./routes/usuario'); // Corrigido
 const motoRoutes = require('./routes/motoRoutes');
 
-// Rotas públicas
+// Usar as rotas
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
@@ -82,7 +82,7 @@ app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
 
-// Middleware de erro (sempre no final)
+// Middleware de erro
 app.use((err, req, res, next) => {
   console.error('Erro interno:', err.stack);
   const statusCode = err.statusCode || 500;
