@@ -62,13 +62,13 @@ const usuarioRoutes = require('./routes/usuario');
 const motoRoutes = require('./routes/motoRoutes');
 
 // Usar as rotas
-app.use('/api/v1/motos', require('./routes/motos'));
+app.use('/api/v1/motos', motoRoutes);  // Corrigido para usar motoRoutes importado corretamente
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/usuarios', usuarioRoutes);
-app.use('/api/v1/motos', motoRoutes);
+app.use('/api/v1/auth', authRoutes); // Corrigido para usar authRoutes importado corretamente
 
 console.log("Rotas principais registradas!");
 
