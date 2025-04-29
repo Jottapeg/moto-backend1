@@ -1,3 +1,5 @@
+// app.js
+
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
@@ -9,6 +11,16 @@ const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+
+// Importar rotas
+const authRoutes = require('./routes/auth');
+const listingRoutes = require('./routes/listings');
+const conversationRoutes = require('./routes/conversations');
+const paymentRoutes = require('./routes/payments');
+const subscriptionRoutes = require('./routes/subscriptions');
+const usuarioRoutes = require('./routes/usuarioRoutes'); // Certo agora
+const motoRoutes = require('./routes/motoRoutes'); // Certo agora
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -17,9 +29,9 @@ dotenv.config();
 const app = express();
 
 // Configurações iniciais
-app.set('trust proxy', 1); // Colocado no início, onde é o correto
+app.set('trust proxy', 1);
 
-// Middleware de segurança
+// Middlewares de segurança
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
@@ -27,44 +39,37 @@ app.use(hpp());
 
 // Limitar requisições
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutos
-  max: 100 // 100 requisições por IP
+  windowMs: 10 * 60 * 1000,
+  max: 100
 });
 app.use('/api/', limiter);
 
-// Middleware para CORS
+// CORS
 app.use(cors({
-  origin: 'http://localhost:3000',  // Substitua pelo seu domínio
+  origin: 'http://localhost:3000', // ajuste conforme necessário
   methods: ['GET', 'POST'],
 }));
 
-// Middleware para parsing
+// Parsing
 app.use(express.json());
 app.use(cookieParser());
 
-// Middleware para upload de arquivos
+// Uploads
 app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: '/tmp/',
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
+  limits: { fileSize: 10 * 1024 * 1024 },
   abortOnLimit: true
 }));
 
-// Importar rotas
-const authRoutes = require('./routes/auth');
-const listingRoutes = require('./routes/listings');
-const conversationRoutes = require('./routes/conversations');
-const paymentRoutes = require('./routes/payments');
-const subscriptionRoutes = require('./routes/subscriptions');
-const usuarioRoutes = require('./routes/usuario'); // Rota de usuários
-
-// Definir rotas da API
+// Rotas públicas
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/usuarios', usuarioRoutes);
+app.use('/api/v1/motos', motoRoutes);
 
 console.log("Rotas principais registradas!");
 
@@ -78,12 +83,38 @@ app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
 
-// Middleware para tratamento de erros
+// Middleware para verificar o token
+const autenticarUsuario = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, message: 'Token não fornecido' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.usuarioId = decoded.id;
+    next();
+  } catch (error) {
+    return res.status(403).json({ success: false, message: 'Token inválido ou expirado' });
+  }
+};
+
+// Rota protegida
+app.get('/api/v1/usuarios/protegido', autenticarUsuario, (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'Acesso permitido',
+    usuarioId: req.usuarioId,
+  });
+});
+
+// Middleware de erro
 app.use((err, req, res, next) => {
   console.error('Erro interno:', err.stack);
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Erro interno do servidor';
-  
+
   res.status(statusCode).json({
     success: false,
     error: message
@@ -99,7 +130,7 @@ const startServer = async () => {
     });
     
     console.log('MongoDB conectado');
-    
+
     app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
       console.log(`Servidor rodando na porta ${process.env.PORT || 5000}`);
     });
@@ -111,70 +142,3 @@ const startServer = async () => {
 startServer();
 
 module.exports = app;
-
-
-const express = require('express');
-const app = express();
-const mongoose = require('mongoose');
-const cors = require('cors');
-const dotenv = require('dotenv');
-const usuarioRoutes = require('./routes/usuarioRoutes');
-const motoRoutes = require('./routes/motoRoutes'); // Importando o arquivo de rotas de motos
-
-dotenv.config();
-
-// Middlewares
-app.use(express.json()); // Para fazer o Express entender JSON no corpo da requisição
-app.use(cors()); // Para permitir requisições de diferentes origens (CORS)
-
-// Conectando ao banco de dados MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log('Banco de dados conectado com sucesso!'))
-.catch((err) => console.error('Erro ao conectar com o banco de dados', err));
-
-// Registrando as rotas
-app.use('/api/v1/usuarios', usuarioRoutes); // Registrando as rotas de usuários
-app.use('/api/v1/motos', motoRoutes); // Registrando as rotas de motos
-
-// Iniciando o servidor
-const port = process.env.PORT || 5000;
-app.listen(port, () => {
-  console.log(`Servidor rodando na porta ${port}`);
-});
-
-// app.js
-
-const express = require('express');
-const jwt = require('jsonwebtoken');
-const app = express();
-
-// Middleware para verificar o token
-const autenticarUsuario = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1]; // Espera um token no formato "Bearer <token>"
-  
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Token não fornecido' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET); // Decodifica o token
-    req.usuarioId = decoded.id; // Armazena o ID do usuário na requisição
-    next(); // Passa para a próxima etapa
-  } catch (error) {
-    return res.status(403).json({ success: false, message: 'Token inválido ou expirado' });
-  }
-};
-
-// Rota protegida
-app.get('/api/v1/usuarios/protegido', autenticarUsuario, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Acesso permitido',
-    usuarioId: req.usuarioId,
-  });
-});
-
-// Outras rotas e configurações...
