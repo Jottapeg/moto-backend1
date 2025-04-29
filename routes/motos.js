@@ -12,29 +12,25 @@ const {
   desfavoritarMoto
 } = require('../controllers/motoController');
 
-const { proteger } = require('../middleware/auth');
+const { protect } = require('../middleware/auth');
 const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
-// Criar e listar motos
 router.route('/')
   .get(listarMotos)
-  .post(proteger, upload.single('imagem'), criarMoto); // Função de callback 'criarMoto' correta
+  .post(protect, upload.single('imagem'), criarMoto);
 
-// Operações com uma moto específica
 router.route('/:id')
   .get(obterMoto)
-  .put(proteger, upload.single('imagem'), atualizarMoto)
-  .delete(proteger, deletarMoto);
+  .put(protect, upload.single('imagem'), atualizarMoto)
+  .delete(protect, deletarMoto);
 
-// Destaque, Premium e Vendida
-router.put('/:id/destaque', proteger, marcarDestaque);
-router.put('/:id/premium', proteger, marcarPremium);
-router.put('/:id/vendida', proteger, marcarVendida);
+router.put('/:id/destaque', protect, marcarDestaque);
+router.put('/:id/premium', protect, marcarPremium);
+router.put('/:id/vendida', protect, marcarVendida);
 
-// Favoritar e desfavoritar
-router.put('/:id/favoritar', proteger, favoritarMoto);
-router.put('/:id/desfavoritar', proteger, desfavoritarMoto);
+router.put('/:id/favoritar', protect, favoritarMoto);
+router.put('/:id/desfavoritar', protect, desfavoritarMoto);
 
 module.exports = router;
