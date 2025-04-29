@@ -34,10 +34,10 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS
+// CORS (em produção, você pode trocar o localhost pela URL do seu frontend)
 app.use(cors({
-  origin: 'http://localhost:3000',
-  methods: ['GET', 'POST'],
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
 // Parsing
@@ -58,7 +58,7 @@ const listingRoutes = require('./routes/listings');
 const conversationRoutes = require('./routes/conversations');
 const paymentRoutes = require('./routes/payments');
 const subscriptionRoutes = require('./routes/subscriptions');
-const usuarioRoutes = require('./routes/usuario'); // Corrigido
+const usuarioRoutes = require('./routes/usuario');
 const motoRoutes = require('./routes/motoRoutes');
 
 // Usar as rotas
@@ -102,17 +102,7 @@ const startServer = async () => {
       useUnifiedTopology: true
     });
 
-    console.log('MongoDB conectado');
+    console.log('✅ MongoDB conectado');
 
-    app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
-      console.log(`Servidor rodando na porta ${process.env.PORT || 5000}`);
-    });
-  } catch (err) {
-    console.error('Erro ao conectar ao MongoDB:', err.message);
-    process.exit(1);
-  }
-};
-
-startServer();
-
-module.exports = app;
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT,
