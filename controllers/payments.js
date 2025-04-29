@@ -1,6 +1,6 @@
 const Payment = require('../models/Payment');
 const Listing = require('../models/Listing');
-const usuario = require('../models/usuario');
+const usuario = require('../models/Usuario');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
