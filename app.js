@@ -34,7 +34,7 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// CORS (em produção, você pode trocar o localhost pela URL do seu frontend)
+// CORS
 app.use(cors({
   origin: '*',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -59,16 +59,16 @@ const conversationRoutes = require('./routes/conversations');
 const paymentRoutes = require('./routes/payments');
 const subscriptionRoutes = require('./routes/subscriptions');
 const usuarioRoutes = require('./routes/usuario');
-const motoRoutes = require('./routes/motoRoutes');
+const motoRoutes = require('./routes/motos'); // Corrigido o nome do arquivo
 
 // Usar as rotas
-app.use('/api/v1/motos', motoRoutes);  // Corrigido para usar motoRoutes importado corretamente
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
 app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/usuarios', usuarioRoutes);
-app.use('/api/v1/auth', authRoutes); // Corrigido para usar authRoutes importado corretamente
+app.use('/api/v1/motos', motoRoutes); // Apenas esta linha é necessária para motos
 
 console.log("Rotas principais registradas!");
 
