@@ -20,7 +20,11 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ success: false, error: 'Email já cadastrado' });
     }
 
-    const novoUsuario = new Usuario({ nome, email, senha });
+    // Criptografando a senha
+    const salt = await bcryptjs.genSalt(10);
+    const senhaCriptografada = await bcryptjs.hash(senha, salt);
+
+    const novoUsuario = new Usuario({ nome, email, senha: senhaCriptografada });
     await novoUsuario.save();
 
     res.status(201).json({ success: true, usuario: novoUsuario });
