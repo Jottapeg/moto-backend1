@@ -1,7 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs'); // Importando bcryptjs para criptografar senhas
 const router = express.Router();
-const Usuario = require('../models/usuario');
+const Usuario = require('../models/Usuario');
 
 // Rota para criar um novo usuário
 router.post('/', async (req, res) => {
