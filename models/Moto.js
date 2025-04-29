@@ -40,7 +40,7 @@ const MotoSchema = new mongoose.Schema(
     },
     imagem: {
       type: String,
-      default: 'no-photo.jpg', // Caso o usuário não envie imagem
+      default: 'no-photo.jpg',
     },
     destaque: {
       type: Boolean,
@@ -50,10 +50,12 @@ const MotoSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    vendida: {
+      type: Boolean,
+      default: false,
+    },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 module.exports = mongoose.model('Moto', MotoSchema);
