@@ -62,7 +62,7 @@ const usuarioRoutes = require('./routes/usuario');
 const motoRoutes = require('./routes/motoRoutes');
 
 // Usar as rotas
-app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/motos', require('./routes/motos'));
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/conversations', conversationRoutes);
 app.use('/api/v1/payments', paymentRoutes);
