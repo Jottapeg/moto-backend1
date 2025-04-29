@@ -20,7 +20,7 @@ const router = express.Router();
 // Criar e listar motos
 router.route('/')
   .get(listarMotos)
-  .post(proteger, upload.single('imagem'), criarMoto);
+  .post(proteger, upload.single('imagem'), criarMoto); // Função de callback 'criarMoto' correta
 
 // Operações com uma moto específica
 router.route('/:id')
