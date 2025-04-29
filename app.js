@@ -11,7 +11,6 @@ const hpp = require('hpp');
 const mongoSanitize = require('express-mongo-sanitize');
 const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
-const jwt = require('jsonwebtoken');
 
 // Carregar variáveis de ambiente
 dotenv.config();
@@ -30,7 +29,7 @@ app.use(hpp());
 
 // Limitar requisições
 const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000,
+  windowMs: 10 * 60 * 1000, // 10 minutos
   max: 100
 });
 app.use('/api/', limiter);
@@ -38,7 +37,7 @@ app.use('/api/', limiter);
 // CORS
 app.use(cors({
   origin: 'http://localhost:3000', // ajuste conforme necessário
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
 }));
 
 // Parsing
@@ -49,7 +48,7 @@ app.use(cookieParser());
 app.use(fileUpload({
   useTempFiles: true,
   tempFileDir: '/tmp/',
-  limits: { fileSize: 10 * 1024 * 1024 },
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB
   abortOnLimit: true
 }));
 
@@ -59,7 +58,7 @@ const listingRoutes = require('./routes/listings');
 const conversationRoutes = require('./routes/conversations');
 const paymentRoutes = require('./routes/payments');
 const subscriptionRoutes = require('./routes/subscriptions');
-const usuarioRoutes = require('./routes/usuario'); // <- corrigido
+const usuarioRoutes = require('./routes/usuario'); // Corrigido
 const motoRoutes = require('./routes/motoRoutes');
 
 // Rotas públicas
@@ -83,33 +82,7 @@ app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
 
-// Middleware para verificar o token
-const autenticarUsuario = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Token não fornecido' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.usuarioId = decoded.id;
-    next();
-  } catch (error) {
-    return res.status(403).json({ success: false, message: 'Token inválido ou expirado' });
-  }
-};
-
-// Rota protegida
-app.get('/api/v1/usuarios/protegido', autenticarUsuario, (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: 'Acesso permitido',
-    usuarioId: req.usuarioId,
-  });
-});
-
-// Middleware de erro
+// Middleware de erro (sempre no final)
 app.use((err, req, res, next) => {
   console.error('Erro interno:', err.stack);
   const statusCode = err.statusCode || 500;
