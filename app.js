@@ -13,15 +13,6 @@ const fileUpload = require('express-fileupload');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
-// Importar rotas
-const authRoutes = require('./routes/auth');
-const listingRoutes = require('./routes/listings');
-const conversationRoutes = require('./routes/conversations');
-const paymentRoutes = require('./routes/payments');
-const subscriptionRoutes = require('./routes/subscriptions');
-const usuarioRoutes = require('./routes/usuarioRoutes'); // Certo agora
-const motoRoutes = require('./routes/motoRoutes'); // Certo agora
-
 // Carregar variáveis de ambiente
 dotenv.config();
 
@@ -61,6 +52,15 @@ app.use(fileUpload({
   limits: { fileSize: 10 * 1024 * 1024 },
   abortOnLimit: true
 }));
+
+// Importar rotas
+const authRoutes = require('./routes/auth');
+const listingRoutes = require('./routes/listings');
+const conversationRoutes = require('./routes/conversations');
+const paymentRoutes = require('./routes/payments');
+const subscriptionRoutes = require('./routes/subscriptions');
+const usuarioRoutes = require('./routes/usuario'); // <- corrigido
+const motoRoutes = require('./routes/motoRoutes');
 
 // Rotas públicas
 app.use('/api/v1/auth', authRoutes);
@@ -128,7 +128,7 @@ const startServer = async () => {
       useNewUrlParser: true,
       useUnifiedTopology: true
     });
-    
+
     console.log('MongoDB conectado');
 
     app.listen(process.env.PORT || 5000, '0.0.0.0', () => {
@@ -139,6 +139,7 @@ const startServer = async () => {
     process.exit(1);
   }
 };
+
 startServer();
 
 module.exports = app;
