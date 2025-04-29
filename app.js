@@ -52,25 +52,15 @@ app.use(fileUpload({
   abortOnLimit: true
 }));
 
-// Importar rotas
-const authRoutes = require('./routes/auth');
-const listingRoutes = require('./routes/listings');
-const conversationRoutes = require('./routes/conversations');
-const paymentRoutes = require('./routes/payments');
-const subscriptionRoutes = require('./routes/subscriptions');
+// Importar rotas (ajustado com base nos arquivos que você enviou)
 const usuarioRoutes = require('./routes/usuario');
-const motoRoutes = require('./routes/motos.js');
+const motoRoutes = require('./routes/motos');
 
 // Usar as rotas
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1/listings', listingRoutes);
-app.use('/api/v1/conversations', conversationRoutes);
-app.use('/api/v1/payments', paymentRoutes);
-app.use('/api/v1/subscriptions', subscriptionRoutes);
 app.use('/api/v1/usuarios', usuarioRoutes);
-app.use('/api/v1/motos', motoRoutes); // Apenas esta linha é necessária para motos
+app.use('/api/v1/motos', motoRoutes);
 
-console.log("Rotas principais registradas!");
+console.log("✅ Rotas principais registradas: /api/v1/usuarios e /api/v1/motos");
 
 // Rota raiz
 app.get('/', (req, res) => {
