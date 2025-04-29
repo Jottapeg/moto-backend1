@@ -1,77 +1,116 @@
 const Moto = require('../models/Moto');
 
-// @desc    Criar nova moto
-// @route   POST /api/v1/motos
-// @access  Privado
+// Criar uma nova moto
 exports.criarMoto = async (req, res) => {
   try {
-    const moto = await Moto.create({
+    const novaMoto = new Moto({
       ...req.body,
       usuario: req.usuario.id,
+      imagem: req.file ? req.file.filename : 'no-photo.jpg',
     });
-
-    res.status(201).json({
-      success: true,
-      moto,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      error: 'Erro ao criar a moto',
-    });
+    const motoSalva = await novaMoto.save();
+    res.status(201).json(motoSalva);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao criar moto', detalhes: err.message });
   }
 };
 
-// @desc    Listar todas as motos
-// @route   GET /api/v1/motos
-// @access  Público
+// Listar todas as motos
 exports.listarMotos = async (req, res) => {
   try {
     const motos = await Moto.find().populate('usuario', 'nome email');
-
-    res.status(200).json({
-      success: true,
-      count: motos.length,
-      motos,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      error: 'Erro ao listar as motos',
-    });
+    res.json(motos);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao listar motos' });
   }
 };
 
-// @desc    Deletar uma moto
-// @route   DELETE /api/v1/motos/:id
-// @access  Privado
+// Obter uma moto específica
+exports.obterMoto = async (req, res) => {
+  try {
+    const moto = await Moto.findById(req.params.id).populate('usuario', 'nome email');
+    if (!moto) return res.status(404).json({ error: 'Moto não encontrada' });
+    res.json(moto);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao buscar moto' });
+  }
+};
+
+// Atualizar moto
+exports.atualizarMoto = async (req, res) => {
+  try {
+    const dadosAtualizados = {
+      ...req.body,
+      imagem: req.file ? req.file.filename : undefined,
+    };
+    const motoAtualizada = await Moto.findByIdAndUpdate(req.params.id, dadosAtualizados, {
+      new: true,
+      runValidators: true,
+    });
+    if (!motoAtualizada) return res.status(404).json({ error: 'Moto não encontrada' });
+    res.json(motoAtualizada);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao atualizar moto' });
+  }
+};
+
+// Deletar moto
 exports.deletarMoto = async (req, res) => {
   try {
-    const moto = await Moto.findById(req.params.id);
+    const moto = await Moto.findByIdAndDelete(req.params.id);
+    if (!moto) return res.status(404).json({ error: 'Moto não encontrada' });
+    res.json({ sucesso: true, mensagem: 'Moto removida com sucesso' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao deletar moto' });
+  }
+};
 
-    if (!moto) {
-      return res.status(404).json({
-        success: false,
-        error: 'Moto não encontrada',
-      });
-    }
+// Marcar como destaque
+exports.marcarDestaque = async (req, res) => {
+  try {
+    const moto = await Moto.findByIdAndUpdate(req.params.id, { destaque: true }, { new: true });
+    res.json(moto);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao destacar moto' });
+  }
+};
 
-    // Opcional: checar se a moto pertence ao usuário que está deletando
+// Marcar como premium
+exports.marcarPremium = async (req, res) => {
+  try {
+    const moto = await Moto.findByIdAndUpdate(req.params.id, { premium: true }, { new: true });
+    res.json(moto);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao marcar como premium' });
+  }
+};
 
-    await moto.deleteOne();
+// Marcar como vendida
+exports.marcarVendida = async (req, res) => {
+  try {
+    const moto = await Moto.findByIdAndUpdate(req.params.id, { vendida: true }, { new: true });
+    res.json(moto);
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao marcar como vendida' });
+  }
+};
 
-    res.status(200).json({
-      success: true,
-      data: {},
-      message: 'Moto removida com sucesso',
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      success: false,
-      error: 'Erro ao deletar a moto',
-    });
+// Favoritar moto
+exports.favoritarMoto = async (req, res) => {
+  try {
+    // lógica simplificada: você pode adaptar para salvar no usuário depois
+    res.json({ sucesso: true, mensagem: 'Favoritada com sucesso (placeholder)' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao favoritar' });
+  }
+};
+
+// Desfavoritar moto
+exports.desfavoritarMoto = async (req, res) => {
+  try {
+    // lógica simplificada: você pode adaptar para remover do usuário depois
+    res.json({ sucesso: true, mensagem: 'Desfavoritada com sucesso (placeholder)' });
+  } catch (err) {
+    res.status(500).json({ error: 'Erro ao desfavoritar' });
   }
 };
