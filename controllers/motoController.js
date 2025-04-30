@@ -97,7 +97,9 @@ const favoritarMoto = async (req, res) => {
     const moto = await Moto.findById(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
     if (!moto.favoritos) moto.favoritos = [];
-    moto.favoritos.push(req.usuario.id);
+    if (!moto.favoritos.includes(req.usuario.id)) {
+      moto.favoritos.push(req.usuario.id);
+    }
     await moto.save();
     res.json(moto);
   } catch (error) {
