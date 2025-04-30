@@ -1,33 +1,18 @@
 const express = require('express');
 const router = express.Router();
+const authController = require('../controllers/auth');
+const { proteger } = require('../middleware/auth');
 
-const { protect } = require('../middleware/auth');
-
-const {
-  register,
-  login,
-  logout,
-  getMe,
-  verifyEmail,
-  verifyPhone,
-  resendPhoneVerification,
-  forgotPassword,
-  resetPassword,
-  updateDetails,
-  updatePassword
-} = require('../controllers/auth');
-
-// Rotas de autenticação
-router.post('/register', register);
-router.post('/login', login);
-router.get('/logout', logout);
-router.get('/me', protect, getMe);
-router.get('/verify-email/:token', verifyEmail);
-router.post('/verify-phone', protect, verifyPhone);
-router.get('/resend-phone-verification', protect, resendPhoneVerification);
-router.post('/forgot-password', forgotPassword);
-router.put('/reset-password/:token', resetPassword);
-router.put('/update-details', protect, updateDetails);
-router.put('/update-password', protect, updatePassword);
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+router.get('/logout', authController.logout);
+router.get('/me', proteger, authController.getMe);
+router.get('/verify-email/:token', authController.verifyEmail);
+router.post('/verify-phone', proteger, authController.verifyPhone);
+router.get('/resend-phone-verification', proteger, authController.resendPhoneVerification);
+router.post('/forgot-password', authController.forgotPassword);
+router.put('/reset-password/:token', authController.resetPassword);
+router.put('/update-details', proteger, authController.updateDetails);
+router.put('/update-password', proteger, authController.updatePassword);
 
 module.exports = router;
