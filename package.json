@@ -26,7 +26,7 @@
     "nodemailer": "^6.9.2",
     "twilio": "^4.11.1",
     "xss-clean": "^0.1.1",
-    "morgan": "^1.10.0"  // Adicionando o morgan aqui
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.22"
