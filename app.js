@@ -17,7 +17,12 @@ app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
 
-// Rotas
+// Rota raiz para evitar erro 404 ao acessar "/"
+app.get('/', (req, res) => {
+  res.send('API do Marketplace de Motos rodando...');
+});
+
+// Rotas da API
 app.use('/api/v1/auth', authRoutes);
 
 // Iniciar servidor
