@@ -3,11 +3,11 @@
 const Moto = require('../models/Moto');
 
 // Criar moto
-async function criarMoto(req, res) {
+exports.criarMoto = async (req, res) => {
   try {
     const dados = { ...req.body };
     if (req.file) {
-      dados.imagem = req.file.path; // ou req.file.filename, conforme seu upload
+      dados.imagem = req.file.path;
     }
     dados.usuario = req.user.id;
     const moto = await Moto.create(dados);
@@ -16,10 +16,10 @@ async function criarMoto(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao criar moto', detalhes: err.message });
   }
-}
+};
 
 // Listar motos
-async function listarMotos(req, res) {
+exports.listarMotos = async (req, res) => {
   try {
     const motos = await Moto.find().populate('usuario', 'nome email');
     return res.json(motos);
@@ -27,10 +27,10 @@ async function listarMotos(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao listar motos' });
   }
-}
+};
 
 // Obter moto por ID
-async function obterMoto(req, res) {
+exports.obterMoto = async (req, res) => {
   try {
     const moto = await Moto.findById(req.params.id).populate('usuario', 'nome email');
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -39,10 +39,10 @@ async function obterMoto(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao buscar moto' });
   }
-}
+};
 
 // Atualizar moto
-async function atualizarMoto(req, res) {
+exports.atualizarMoto = async (req, res) => {
   try {
     const atualizacoes = { ...req.body };
     if (req.file) {
@@ -58,10 +58,10 @@ async function atualizarMoto(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao atualizar moto' });
   }
-}
+};
 
 // Deletar moto
-async function deletarMoto(req, res) {
+exports.deletarMoto = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndDelete(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -70,10 +70,10 @@ async function deletarMoto(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao deletar moto' });
   }
-}
+};
 
 // Marcar como destaque
-async function marcarDestaque(req, res) {
+exports.marcarDestaque = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { destaque: true }, { new: true });
     return res.json(moto);
@@ -81,10 +81,10 @@ async function marcarDestaque(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao marcar destaque' });
   }
-}
+};
 
 // Marcar como premium
-async function marcarPremium(req, res) {
+exports.marcarPremium = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { premium: true }, { new: true });
     return res.json(moto);
@@ -92,10 +92,10 @@ async function marcarPremium(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao marcar premium' });
   }
-}
+};
 
 // Marcar como vendida
-async function marcarVendida(req, res) {
+exports.marcarVendida = async (req, res) => {
   try {
     const moto = await Moto.findByIdAndUpdate(req.params.id, { vendida: true }, { new: true });
     return res.json(moto);
@@ -103,10 +103,10 @@ async function marcarVendida(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao marcar vendida' });
   }
-}
+};
 
-// Favoritar motocicleta
-async function favoritarMoto(req, res) {
+// Favoritar moto
+exports.favoritarMoto = async (req, res) => {
   try {
     const moto = await Moto.findById(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
@@ -118,33 +118,18 @@ async function favoritarMoto(req, res) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao favoritar moto' });
   }
-}
+};
 
-// Desfavoritar motocicleta
-async function desfavoritarMoto(req, res) {
+// Desfavoritar moto
+exports.desfavoritarMoto = async (req, res) => {
   try {
     const moto = await Moto.findById(req.params.id);
     if (!moto) return res.status(404).json({ erro: 'Moto não encontrada' });
-    moto.favoritos = (moto.favoritos || []).filter(
-      uid => uid.toString() !== req.user.id
-    );
+    moto.favoritos = (moto.favoritos || []).filter(id => id.toString() !== req.user.id);
     await moto.save();
     return res.json(moto);
   } catch (err) {
     console.error(err);
     return res.status(500).json({ erro: 'Erro ao desfavoritar moto' });
   }
-}
-
-module.exports = {
-  criarMoto,
-  listarMotos,
-  obterMoto,
-  atualizarMoto,
-  deletarMoto,
-  marcarDestaque,
-  marcarPremium,
-  marcarVendida,
-  favoritarMoto,
-  desfavoritarMoto
 };
