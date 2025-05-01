@@ -1,5 +1,5 @@
 // routes/motos.js
-// ---------------------------------------------------------
+
 const express = require('express');
 const {
   criarMoto,
@@ -19,17 +19,18 @@ const { upload } = require('../middleware/upload');
 
 const router = express.Router();
 
-// CRUD principal
+// GET público, POST protegido
 router
   .route('/')
-  .get(listarMotos)                                   // público
-  .post(protect, upload.single('imagem'), criarMoto); // protegido
+  .get(listarMotos)
+  .post(protect, upload.single('imagem'), criarMoto);
 
+// GET público, PUT/DELETE protegidos
 router
   .route('/:id')
-  .get(obterMoto)                                     // público
-  .put(protect, upload.single('imagem'), atualizarMoto) // protegido
-  .delete(protect, deletarMoto);                      // protegido
+  .get(obterMoto)
+  .put(protect, upload.single('imagem'), atualizarMoto)
+  .delete(protect, deletarMoto);
 
 // Endpoints extras (todos protegidos)
 router.put('/:id/destaque', protect, marcarDestaque);
@@ -39,4 +40,3 @@ router.put('/:id/favoritar', protect, favoritarMoto);
 router.put('/:id/desfavoritar', protect, desfavoritarMoto);
 
 module.exports = router;
-
