@@ -3,7 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
-const authRoutes = require('./routes/auth');
+const usuarioRoutes = require('./routes/usuario'); // <- correto
 
 dotenv.config();
 
@@ -23,7 +23,7 @@ app.get('/', (req, res) => {
 });
 
 // Rotas da API
-app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/usuarios', usuarioRoutes); // <- correto
 
 // Iniciar servidor
 const PORT = process.env.PORT || 5000;
