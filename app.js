@@ -1,3 +1,4 @@
+// app.js
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
@@ -19,6 +20,9 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 app.use(cors());
+
+// Servir arquivos estáticos da pasta 'uploads'
+app.use('/uploads', express.static('uploads'));
 
 // Rota raiz para evitar erro 404
 app.get('/', (req, res) => {
